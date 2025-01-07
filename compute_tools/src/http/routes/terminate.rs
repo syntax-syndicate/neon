@@ -53,5 +53,5 @@ pub(in crate::http) async fn terminate(State(compute): State<Arc<ComputeNode>>) 
 
     info!("terminated Postgres");
 
-    StatusCode::NO_CONTENT.into_response()
+    StatusCode::OK.into_response()
 }

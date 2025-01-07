@@ -71,5 +71,5 @@ pub(in crate::http) async fn configure(
     let state = compute.state.lock().unwrap().clone();
     let body = ComputeStatusResponse::from(&state);
 
-    JsonResponse::success(StatusCode::ACCEPTED, body)
+    JsonResponse::success(StatusCode::OK, body)
 }
