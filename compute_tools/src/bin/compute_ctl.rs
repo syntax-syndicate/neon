@@ -47,7 +47,6 @@ use chrono::Utc;
 use clap::Arg;
 use compute_tools::disk_quota::set_disk_quota;
 use compute_tools::lsn_lease::launch_lsn_lease_bg_task_for_static;
-use nix::libc::atexit;
 use signal_hook::consts::{SIGQUIT, SIGTERM};
 use signal_hook::{consts::SIGINT, iterator::Signals};
 use tracing::{error, info, warn};
@@ -74,16 +73,8 @@ use utils::failpoint_support;
 // in-case of not-set environment var
 const BUILD_TAG_DEFAULT: &str = "latest";
 
-extern "C" fn i_hate_this() {
-    info!("AM I STUPID");
-}
-
 fn main() -> Result<()> {
     let scenario = failpoint_support::init();
-
-    unsafe {
-        atexit(i_hate_this);
-    }
 
     let (build_tag, clap_args) = init()?;
 

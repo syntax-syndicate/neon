@@ -1,4 +1,5 @@
 use std::{
+    net::{IpAddr, Ipv6Addr, SocketAddr},
     sync::{
         atomic::{AtomicU64, Ordering},
         Arc,
@@ -128,11 +129,14 @@ async fn serve(port: u16, compute: Arc<ComputeNode>) {
         app = app.route("/failpoints", post(failpoints::configure_failpoints))
     }
 
-    let listener = match TcpListener::bind(format!("127.0.0.1:{port}")).await {
+    // This usually binds to both IPv4 and IPv6 on Linux, see
+    // https://github.com/rust-lang/rust/pull/34440 for more information
+    let addr = SocketAddr::new(IpAddr::from(Ipv6Addr::UNSPECIFIED), port);
+    let listener = match TcpListener::bind(&addr).await {
         Ok(listener) => listener,
         Err(e) => {
             error!(
-                "failed to bind the compute_ctl HTTP server to 127.0.0.1:{}: {}",
+                "failed to bind the compute_ctl HTTP server to port {}: {}",
                 port, e
             );
             return;
